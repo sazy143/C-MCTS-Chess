@@ -18,7 +18,7 @@ int main()
     //set game turn and player color white = 0
     srand(time(0));
     int gameTurn = 0;
-    int playerColor = rand() & 1;
+    int playerColor = 0;//rand() & 1;
 
     while(true){
 
@@ -35,10 +35,10 @@ int main()
             //choose move
         }
         
-        bool validMove = Move()
-        if(!validMove){
-            goto ReadCommand;
-        }
+        bool validMove = Move(command, gameTurn, board);
+        // if(!validMove){
+        //     goto ReadCommand;
+        // }
 
         //Display board after move
         PrintBoard(board);

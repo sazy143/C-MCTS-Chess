@@ -19,7 +19,7 @@ struct piece {
 void CreateBoard(struct piece *board);
 void PrintBoard(struct piece *board);
 int LetterToNum(char letter);
-bool Move(char *startPos, char *endPos, bool turn, struct piece *board);
+bool Move(char *move, bool turn, struct piece *board);
 bool PawnMove(int sx, int sy, int ex, int ey);
 bool KnightMove(int sx, int sy, int ex, int ey);
 bool BishopMove(int sx, int sy, int ex, int ey);
@@ -30,16 +30,26 @@ bool KingMove(int sx, int sy, int ex, int ey);
 
 //returns bool true if move is valid
 //assume valid cordinates given
-bool Move(char *startPos, char *endPos, bool turn, struct piece *board)
+bool Move(char *move, bool turn, struct piece *board)
 {
+    //make sure we have full command (avoid segmentation error)
+    if(!move[4]){
+        return false;
+    }
     //pull out cordinates from parameters
-    int sx = LetterToNum(startPos[0]);
-    int sy = startPos[1] - '0';
-    int ex = LetterToNum(endPos[0]);
-    int ey = endPos[1] - '0';
+    int sx = LetterToNum(move[0]);
+    int sy = (move[1] - '0') -1;
+    int ex = LetterToNum(move[3]);
+    int ey = (move[4] - '0') -1;
+
+    //validate coordinates
+    //if(sx, sy, ex, ey > 7){}
 
     //get the piece
     struct piece startPiece = board[sx * 8 + sy];
+    struct piece endPiece = board[ex * 8 + ey];
+    printf("%d",endPiece.pieceType);
+    printf("%d",endPiece.pieceType);
 
     //get the piece selected
     int pType = startPiece.pieceType;
@@ -166,6 +176,7 @@ void CreateBoard(struct piece *board){
 void PrintBoard(struct piece *board)
 {
     for(int i = 0; i < 8; i++){
+        printf("%d ", i + 1);
         for(int j = 0; j < 8; j++){
             int pieceType = board[(i * 8) + j].pieceType;
             switch(pieceType){
@@ -195,27 +206,28 @@ void PrintBoard(struct piece *board)
         }
         printf("\n");
     }
+    printf("  A B C D E F G H\n");
 }
 
 int LetterToNum(char letter)
 {
     switch(letter)
     {
-        case 'a':
+        case 'A':
             return 0;
-        case 'b':
+        case 'B':
             return 1;
-        case 'c':
+        case 'C':
             return 2;
-        case 'd':
+        case 'D':
             return 3;
-        case 'e':
+        case 'E':
             return 4;
-        case 'f':
+        case 'F':
             return 5;
-        case 'g':
+        case 'G':
             return 6;
-        case 'h':
+        case 'H':
             return 7;
     }
     return -1;
