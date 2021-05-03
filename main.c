@@ -7,7 +7,7 @@
 
 int main()
 {
-
+    //command are format "xy xy" for starting pos to end pos or "end" to end game
     char endCommand[] = "end";
 
     //set up board
@@ -18,49 +18,40 @@ int main()
     //set game turn and player color white = 0
     srand(time(0));
     int gameTurn = 0;
-    int playerColor = 0; //rand() & 1;
+    int playerColor = 0;//rand() & 1;
 
-    while (true)
-    {
+    while(true){
 
-    readcommand:;
-        //command are format "xy xy" for starting pos to end pos or "end" to end game
-        char command[5] = {0}, input; //In the loop to be reset on each loop
-        if (gameTurn == playerColor)
-        {
+        ReadCommand: ;
+        char command[5] = {0}, input;
+        if(gameTurn == playerColor){
             printf("Enter Command: ");
-            for (int i = 0; i < 6; i++)
-            {
-                input = getchar();
-                if (input == '\n')
-                {
-                    break;
-                }
-                command[i] = input;
+            for(int i = 0; i < 5; i++){
+            input = getchar();
+            if(input == '\n'){
+                break;
             }
-            while (input != '\n')
-                input = getchar(); //clear extra characters
-            if (strcmp(command, endCommand) == 0)
-            {
+            command[i] = input;
+        }
+        while ( input != '\n') input = getchar();
+        
+            if(strcmp(command, endCommand) == 0){
                 printf("Game Ended By Command\n");
                 break;
             }
-        }
-        else
-        { //if ai's turn
+        }else{ //if ai's turn
             //run MCTS
             //choose move
         }
-
+        
         bool validMove = Move(command, gameTurn, board);
-        if (!validMove)
-        {
-            goto readcommand;
+        if(!validMove){
+            goto ReadCommand;
         }
 
         //Display board after move
         PrintBoard(board);
     }
-
+    
     return 0;
 }

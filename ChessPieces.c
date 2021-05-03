@@ -54,6 +54,10 @@ bool Move(char *move, int turn, struct piece *board)
     int ex = LetterToNum(move[3]);
     int ey = (move[4] - '0');
 
+    if(sx == -1 || sy == -1 || (sy < 0 || sy > 7) || (ey < 0 || ey > 7)){
+        return false;
+    }
+
     //need to flip y axis since board is 8 -> 1 going down but internal array is 0 -> 7 going down
     sy = 8 - sy;
     ey = 8 - ey;
