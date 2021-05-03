@@ -6,3 +6,7 @@ main.o: main.c
 clean:
 	rm -rf *.o
 	rm bin
+
+test: test.o
+	gcc -I . -c test.c
+	gcc test.o -o bin

@@ -8,7 +8,7 @@
 int main()
 {
     //command are format "xy xy" for starting pos to end pos or "end" to end game
-    char *command = malloc(5 * sizeof(char));
+    char command[1];
     char endCommand[] = "end";
 
     //set up board
@@ -22,10 +22,12 @@ int main()
 
     while(true){
 
-        ReadCommand:
+        printf("%d %d", gameTurn, playerColor);
+
+        readcommand:
         if(gameTurn == playerColor){
             printf("Enter Command: ");
-            scanf("%s", command);
+            fgets(command, 1, stdin);
             if(strcmp(command, endCommand) == 0){
                 printf("Game Ended By Command\n");
                 break;
@@ -35,10 +37,12 @@ int main()
             //choose move
         }
         
+        
+
         bool validMove = Move(command, gameTurn, board);
-        // if(!validMove){
-        //     goto ReadCommand;
-        // }
+        if(!validMove){
+            goto readcommand;
+        }
 
         //Display board after move
         PrintBoard(board);
