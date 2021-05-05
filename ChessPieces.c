@@ -37,7 +37,7 @@ bool BishopMove(struct piece startPiece, struct piece endPiece);
 bool RookMove(struct piece startPiece, struct piece endPiece);
 bool QueenMove(struct piece startPiece, struct piece endPiece);
 bool KingMove(struct piece startPiece, struct piece endPiece);
-bool CheckBetween(struct piece *board, int direction, int sx, int sy, int ex, int ey);
+bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey);
 
 //returns bool true if move is valid
 //assume valid cordinates given
@@ -158,7 +158,7 @@ bool KingMove(struct piece startPiece, struct piece endPiece)
 }
 
 //returns true if no piece inbetween
-bool CheckBetween(struct piece *board, int direction, int sx, int sy, int ex, int ey)
+bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
 {
 
     int horizontalDif = sx - ex;
@@ -167,48 +167,74 @@ bool CheckBetween(struct piece *board, int direction, int sx, int sy, int ex, in
     //diagonal (sx ex and sy ey diffs must equal)
     if (verticalDif != 0 && horizontalDif != 0 && abs(verticalDif) == abs(horizontalDif))
     {
-        if ((verticalDif + horizontalDif) < 0)
-        {
+        //technically only 2 diagonal planes so switch cases to only need two cases
+        if(sx > ex && sy < ey){ //- + to + -
+            int temp = sx;
+            sx = ex;
+            ex = temp;
+
+            temp = sy;
+            sy = ey;
+            ey = temp;
         }
+        if(sx > ex && sy > ey){ // - - to + +
+            int temp = sx;
+            sx = ex;
+            ex = temp;
+
+            temp = sy;
+            sy = ey; 
+            ey = temp;
+        }
+        printf("sx:%d sy:%d ex:%d ey:%d, ", sx, sy, ex, ey);
         //e.g. moving from 5,3(G) -> 3,1 vd = 2 hd = 2
-        if ((verticalDif + horizontalDif) > 0)
+        if (sx < ex && sy < ey)
         {
-            for (int i = 1; i < verticalDif; i++)
-            {
+            printf("Dcase1, ");
+            for (int i = 1; i < abs(verticalDif); i++)
+            {   
+                printf("%d, ", i);
                 if (board[(sy + i) * 8 + (sx + i)].pieceType != empty)
                 {
                     return false;
                 }
             }
         }
-        if (verticalDif > horizontalDif)
+        if (sx < ex && sy > ey)
         {
-        }
-        if (verticalDif < horizontalDif)
-        {
+            printf("Dcase2, ");
+            for (int i = 1; i < abs(verticalDif); i++)
+            {
+                printf("%d, ", i);
+                if (board[(sy - i) * 8 + (sx + i)].pieceType != empty)
+                {
+                    return false;
+                }
+            }
         }
     }
 
-    //vertical (sx and ex must be the same)
-    if (verticalDif != 0 && horizontalDif == 0)
-    {
-        if (verticalDif < 0)
-        {
-        }
-        if (verticalDif > 0)
-        {
-        }
-    }
-    //horizontal (sy and ey must be the same)
-    if (verticalDif == 0 && horizontalDif != 0)
-    {
-        if (horizontalDif < 0)
-        {
-        }
-        if (horizontalDif > 0)
-        {
-        }
-    }
+    // //vertical (sx and ex must be the same)
+    // if (verticalDif != 0 && horizontalDif == 0)
+    // {
+    //     if (verticalDif < 0)
+    //     {
+    //     }
+    //     if (verticalDif > 0)
+    //     {
+    //     }
+    // }
+    // //horizontal (sy and ey must be the same)
+    // if (verticalDif == 0 && horizontalDif != 0)
+    // {
+    //     if (horizontalDif < 0)
+    //     {
+    //     }
+    //     if (horizontalDif > 0)
+    //     {
+    //     }
+    // }
+    return true;
 }
 
 void CreateBoard(struct piece *board)
