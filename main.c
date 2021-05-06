@@ -49,7 +49,10 @@ int main()
             goto ReadCommand;
         }
 
+
+
         //Display board after move
+        printf("\n");
         PrintBoard(board);
     }
     
