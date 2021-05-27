@@ -32,11 +32,11 @@ void PrintBoard(struct piece *board);
 int LetterToNum(char letter);
 bool Move(char *move, int turn, struct piece *board);
 bool PawnMove(struct piece startPiece, struct piece endPiece, struct piece *board);
-bool KnightMove(struct piece startPiece, struct piece endPiece);
-bool BishopMove(struct piece startPiece, struct piece endPiece);
-bool RookMove(struct piece startPiece, struct piece endPiece);
-bool QueenMove(struct piece startPiece, struct piece endPiece);
-bool KingMove(struct piece startPiece, struct piece endPiece);
+bool KnightMove(struct piece startPiece, struct piece endPiece, struct piece *board);
+bool BishopMove(struct piece startPiece, struct piece endPiece, struct piece *board);
+bool RookMove(struct piece startPiece, struct piece endPiece, struct piece *board);
+bool QueenMove(struct piece startPiece, struct piece endPiece, struct piece *board);
+bool KingMove(struct piece startPiece, struct piece endPiece, struct piece *board);
 bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey);
 
 //returns bool true if move is valid
@@ -89,23 +89,23 @@ bool Move(char *move, int turn, struct piece *board)
         break;
     case 2:
         printf("KnightMove, ");
-        validMove = KnightMove(startPiece, endPiece);
+        validMove = KnightMove(startPiece, endPiece, board);
         break;
     case 3:
         printf("BishopMove, ");
-        validMove = BishopMove(startPiece, endPiece);
+        validMove = BishopMove(startPiece, endPiece, board);
         break;
     case 4:
         printf("RookMove, ");
-        validMove = RookMove(startPiece, endPiece);
+        validMove = RookMove(startPiece, endPiece, board);
         break;
     case 5:
         printf("QueenMove, ");
-        validMove = QueenMove(startPiece, endPiece);
+        validMove = QueenMove(startPiece, endPiece, board);
         break;
     case 6:
         printf("KingMove, ");
-        validMove = KingMove(startPiece, endPiece);
+        validMove = KingMove(startPiece, endPiece, board);
         break;
     }
     
@@ -227,23 +227,82 @@ bool PawnMove(struct piece startPiece, struct piece endPiece, struct piece *boar
         }
 }
 
-bool KnightMove(struct piece startPiece, struct piece endPiece)
+bool KnightMove(struct piece startPiece, struct piece endPiece, struct piece *board)
+{
+    //get start and end cordinates as they will be used lots
+    int sx = startPiece.x;
+    int sy = startPiece.y;
+    int ex = endPiece.x;
+    int ey = endPiece.y;
+
+    //moves (2y +-1x) (1y +-2x) (-2y +-1x) (-1y +-2x)
+    if(ey == (sy +2) && (ex == (sx +1) || ex == (sx - 1))){
+        //valid move return true
+                startPiece.x = ex;
+                startPiece.y = ey;
+                startPiece.hasMoved = true;
+                board[ey * 8 + ex] = startPiece;
+                endPiece.x = sx;
+                endPiece.y = sy;
+                endPiece.pieceType = empty;
+                endPiece.pieceColor = 2;
+                board[sy * 8 + sx] = endPiece;
+                return true;
+    }
+    if(ey == (sy +1) && (ex == (sx +2) || ex == (sx - 2))){
+        //valid move return true
+                startPiece.x = ex;
+                startPiece.y = ey;
+                startPiece.hasMoved = true;
+                board[ey * 8 + ex] = startPiece;
+                endPiece.x = sx;
+                endPiece.y = sy;
+                endPiece.pieceType = empty;
+                endPiece.pieceColor = 2;
+                board[sy * 8 + sx] = endPiece;
+                return true;
+    }
+    if(ey == (sy - 2) && (ex == (sx +1) || ex == (sx - 1))){
+        //valid move return true
+                startPiece.x = ex;
+                startPiece.y = ey;
+                startPiece.hasMoved = true;
+                board[ey * 8 + ex] = startPiece;
+                endPiece.x = sx;
+                endPiece.y = sy;
+                endPiece.pieceType = empty;
+                endPiece.pieceColor = 2;
+                board[sy * 8 + sx] = endPiece;
+                return true;
+    }
+    if(ey == (sy - 1) && (ex == (sx + 2) || ex == (sx - 2))){
+        //valid move return true
+                startPiece.x = ex;
+                startPiece.y = ey;
+                startPiece.hasMoved = true;
+                board[ey * 8 + ex] = startPiece;
+                endPiece.x = sx;
+                endPiece.y = sy;
+                endPiece.pieceType = empty;
+                endPiece.pieceColor = 2;
+                board[sy * 8 + sx] = endPiece;
+                return true;
+    }
+}
+
+bool BishopMove(struct piece startPiece, struct piece endPiece, struct piece *board)
 {
 }
 
-bool BishopMove(struct piece startPiece, struct piece endPiece)
+bool RookMove(struct piece startPiece, struct piece endPiece, struct piece *board)
 {
 }
 
-bool RookMove(struct piece startPiece, struct piece endPiece)
+bool QueenMove(struct piece startPiece, struct piece endPiece, struct piece *board)
 {
 }
 
-bool QueenMove(struct piece startPiece, struct piece endPiece)
-{
-}
-
-bool KingMove(struct piece startPiece, struct piece endPiece)
+bool KingMove(struct piece startPiece, struct piece endPiece, struct piece *board)
 {
 }
 
