@@ -37,7 +37,8 @@ bool BishopMove(struct piece startPiece, struct piece endPiece, struct piece *bo
 bool RookMove(struct piece startPiece, struct piece endPiece, struct piece *board);
 bool QueenMove(struct piece startPiece, struct piece endPiece, struct piece *board);
 bool KingMove(struct piece startPiece, struct piece endPiece, struct piece *board);
-bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey);
+bool CheckBetweenD(struct piece *board, int sx, int sy, int ex, int ey);
+bool CheckBetweenVH(struct piece *board, int sx, int sy, int ex, int ey);
 
 //returns bool true if move is valid
 //assume valid cordinates given
@@ -60,11 +61,11 @@ bool Move(char *move, int turn, struct piece *board)
 
     printf("%d %d %d %d, ", sx, sy, ex, ey);
 
-    if(sx == -1 || sy == -1 || (sy < 0 || sy > 7) || (ey < 0 || ey > 7)){
+    if (sx == -1 || sy == -1 || (sy < 0 || sy > 7) || (ey < 0 || ey > 7))
+    {
         return false;
     }
 
-    
     //get the piece
     struct piece startPiece = board[sy * 8 + sx];
     struct piece endPiece = board[ey * 8 + ex];
@@ -108,13 +109,13 @@ bool Move(char *move, int turn, struct piece *board)
         validMove = KingMove(startPiece, endPiece, board);
         break;
     }
-    
-    if(!validMove){
+
+    if (!validMove)
+    {
         return false;
     }
 
     //valid move perform the move
-
 
     return true;
 }
@@ -144,8 +145,8 @@ bool PawnMove(struct piece startPiece, struct piece endPiece, struct piece *boar
             endPiece.x = sx;
             endPiece.y = sy;
             endPiece.pieceType = empty;
-            board[sy * 8 + sx] = endPiece;
             endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
             return true;
         }
         if (ey == (sy - 1) && (sx == ex) && endPiece.pieceType == empty)
@@ -158,11 +159,11 @@ bool PawnMove(struct piece startPiece, struct piece endPiece, struct piece *boar
             endPiece.x = sx;
             endPiece.y = sy;
             endPiece.pieceType = empty;
-            board[sy * 8 + sx] = endPiece;
             endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
             return true;
         }
-        if (ey == (sy - 2) && (sx == ex) && endPiece.pieceType == empty && !startPiece.hasMoved && CheckBetween(board, sx, sy, ex, ey))
+        if (ey == (sy - 2) && (sx == ex) && endPiece.pieceType == empty && !startPiece.hasMoved && CheckBetweenVH(board, sx, sy, ex, ey))
         {
             //valid move return true
             startPiece.x = ex;
@@ -172,59 +173,60 @@ bool PawnMove(struct piece startPiece, struct piece endPiece, struct piece *boar
             endPiece.x = sx;
             endPiece.y = sy;
             endPiece.pieceType = empty;
-            board[sy * 8 + sx] = endPiece;
             endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
             return true;
         }
     }
     if (startPiece.pieceColor == 1)
+    {
+        //check captures
+        if ((sx == (ex - 1) || sx == (ex + 1)) && (sy == (ey - 1)) && endPiece.pieceType != empty)
         {
-            //check captures
-            if ((sx == (ex - 1) || sx == (ex + 1)) && (sy == (ey - 1)) && endPiece.pieceType != empty)
-            {
-                printf("capture, ");
-                //valid capture return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                endPiece.pieceColor = 2;
-                board[sy * 8 + sx] = endPiece;
-                endPiece.pieceColor = 2;
-                return true;
-            }
-            if (ey == (sy + 1) && (sx == ex) && endPiece.pieceType == empty)
-            {
-                //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                board[sy * 8 + sx] = endPiece;
-                endPiece.pieceColor = 2;
-                return true;
-            }
-            if (ey == (sy + 2) && (sx == ex) && endPiece.pieceType == empty && !startPiece.hasMoved && CheckBetween(board, sx, sy, ex, ey))
-            {
-                //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                board[sy * 8 + sx] = endPiece;
-                endPiece.pieceColor = 2;
-                return true;
-            }
+            printf("capture, ");
+            //valid capture return true
+            startPiece.x = ex;
+            startPiece.y = ey;
+            startPiece.hasMoved = true;
+            board[ey * 8 + ex] = startPiece;
+            endPiece.x = sx;
+            endPiece.y = sy;
+            endPiece.pieceType = empty;
+            endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
+            return true;
         }
+        if (ey == (sy + 1) && (sx == ex) && endPiece.pieceType == empty)
+        {
+            //valid move return true
+            startPiece.x = ex;
+            startPiece.y = ey;
+            startPiece.hasMoved = true;
+            board[ey * 8 + ex] = startPiece;
+            endPiece.x = sx;
+            endPiece.y = sy;
+            endPiece.pieceType = empty;
+            endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
+
+            return true;
+        }
+        if (ey == (sy + 2) && (sx == ex) && endPiece.pieceType == empty && !startPiece.hasMoved && CheckBetweenVH(board, sx, sy, ex, ey))
+        {
+            //valid move return true
+            startPiece.x = ex;
+            startPiece.y = ey;
+            startPiece.hasMoved = true;
+            board[ey * 8 + ex] = startPiece;
+            endPiece.x = sx;
+            endPiece.y = sy;
+            endPiece.pieceType = empty;
+            endPiece.pieceColor = 2;
+            board[sy * 8 + sx] = endPiece;
+
+            return true;
+        }
+    }
 }
 
 bool KnightMove(struct piece startPiece, struct piece endPiece, struct piece *board)
@@ -236,62 +238,94 @@ bool KnightMove(struct piece startPiece, struct piece endPiece, struct piece *bo
     int ey = endPiece.y;
 
     //moves (2y +-1x) (1y +-2x) (-2y +-1x) (-1y +-2x)
-    if(ey == (sy +2) && (ex == (sx +1) || ex == (sx - 1))){
+    if (ey == (sy + 2) && (ex == (sx + 1) || ex == (sx - 1)))
+    {
         //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                endPiece.pieceColor = 2;
-                board[sy * 8 + sx] = endPiece;
-                return true;
+        startPiece.x = ex;
+        startPiece.y = ey;
+        startPiece.hasMoved = true;
+        board[ey * 8 + ex] = startPiece;
+        endPiece.x = sx;
+        endPiece.y = sy;
+        endPiece.pieceType = empty;
+        endPiece.pieceColor = 2;
+        board[sy * 8 + sx] = endPiece;
+        return true;
     }
-    if(ey == (sy +1) && (ex == (sx +2) || ex == (sx - 2))){
+    if (ey == (sy + 1) && (ex == (sx + 2) || ex == (sx - 2)))
+    {
         //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                endPiece.pieceColor = 2;
-                board[sy * 8 + sx] = endPiece;
-                return true;
+        startPiece.x = ex;
+        startPiece.y = ey;
+        startPiece.hasMoved = true;
+        board[ey * 8 + ex] = startPiece;
+        endPiece.x = sx;
+        endPiece.y = sy;
+        endPiece.pieceType = empty;
+        endPiece.pieceColor = 2;
+        board[sy * 8 + sx] = endPiece;
+        return true;
     }
-    if(ey == (sy - 2) && (ex == (sx +1) || ex == (sx - 1))){
+    if (ey == (sy - 2) && (ex == (sx + 1) || ex == (sx - 1)))
+    {
         //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                endPiece.pieceColor = 2;
-                board[sy * 8 + sx] = endPiece;
-                return true;
+        startPiece.x = ex;
+        startPiece.y = ey;
+        startPiece.hasMoved = true;
+        board[ey * 8 + ex] = startPiece;
+        endPiece.x = sx;
+        endPiece.y = sy;
+        endPiece.pieceType = empty;
+        endPiece.pieceColor = 2;
+        board[sy * 8 + sx] = endPiece;
+        return true;
     }
-    if(ey == (sy - 1) && (ex == (sx + 2) || ex == (sx - 2))){
+    if (ey == (sy - 1) && (ex == (sx + 2) || ex == (sx - 2)))
+    {
         //valid move return true
-                startPiece.x = ex;
-                startPiece.y = ey;
-                startPiece.hasMoved = true;
-                board[ey * 8 + ex] = startPiece;
-                endPiece.x = sx;
-                endPiece.y = sy;
-                endPiece.pieceType = empty;
-                endPiece.pieceColor = 2;
-                board[sy * 8 + sx] = endPiece;
-                return true;
+        startPiece.x = ex;
+        startPiece.y = ey;
+        startPiece.hasMoved = true;
+        board[ey * 8 + ex] = startPiece;
+        endPiece.x = sx;
+        endPiece.y = sy;
+        endPiece.pieceType = empty;
+        endPiece.pieceColor = 2;
+        board[sy * 8 + sx] = endPiece;
+        return true;
     }
 }
 
 bool BishopMove(struct piece startPiece, struct piece endPiece, struct piece *board)
 {
+
+    int sx = startPiece.x;
+    int sy = startPiece.y;
+    int ex = endPiece.x;
+    int ey = endPiece.y;
+
+    //check between should run all validation for bishops as long as we check its a diagonal move e.g. diff sx ex = sy ey
+    if (abs(sy - ey) != abs(sx - ex))
+    {
+        return false;
+    }
+
+    if (!CheckBetweenD(board, sx, sy, ex, ey))
+    {
+        return false;
+    }
+
+    //valid move return true
+    startPiece.x = ex;
+    startPiece.y = ey;
+    startPiece.hasMoved = true;
+    board[ey * 8 + ex] = startPiece;
+    endPiece.x = sx;
+    endPiece.y = sy;
+    endPiece.pieceType = empty;
+    endPiece.pieceColor = 2;
+    board[sy * 8 + sx] = endPiece;
+    return true;
 }
 
 bool RookMove(struct piece startPiece, struct piece endPiece, struct piece *board)
@@ -307,7 +341,7 @@ bool KingMove(struct piece startPiece, struct piece endPiece, struct piece *boar
 }
 
 //returns true if no piece inbetween
-bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
+bool CheckBetweenD(struct piece *board, int sx, int sy, int ex, int ey)
 {
 
     int horizontalDif = sx - ex;
@@ -317,7 +351,8 @@ bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
     if (verticalDif != 0 && horizontalDif != 0 && abs(verticalDif) == abs(horizontalDif))
     {
         //technically only 2 diagonal planes so switch cases to only need two cases
-        if(sx > ex && sy < ey){ //- + to + -
+        if (sx > ex && sy < ey)
+        { //- + to + -
             int temp = sx;
             sx = ex;
             ex = temp;
@@ -326,22 +361,22 @@ bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
             sy = ey;
             ey = temp;
         }
-        if(sx > ex && sy > ey){ // - - to + +
+        if (sx > ex && sy > ey)
+        { // - - to + +
             int temp = sx;
             sx = ex;
             ex = temp;
 
             temp = sy;
-            sy = ey; 
+            sy = ey;
             ey = temp;
         }
-        printf("sx:%d sy:%d ex:%d ey:%d, ", sx, sy, ex, ey);
         //e.g. moving from 5,3(G) -> 3,1 vd = 2 hd = 2
         if (sx < ex && sy < ey)
         {
-            printf("Dcase1, ");
-            for (int i = 1; i < abs(verticalDif); i++)
-            {   
+            //-1 because bishop can capture last spot
+            for (int i = 1; i < abs(verticalDif) - 1; i++)
+            {
                 printf("%d, ", i);
                 if (board[(sy + i) * 8 + (sx + i)].pieceType != empty)
                 {
@@ -351,8 +386,8 @@ bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
         }
         if (sx < ex && sy > ey)
         {
-            printf("Dcase2, ");
-            for (int i = 1; i < abs(verticalDif); i++)
+            //-1 because bishop can capture last spot
+            for (int i = 1; i < abs(verticalDif) - 1; i++)
             {
                 printf("%d, ", i);
                 if (board[(sy - i) * 8 + (sx + i)].pieceType != empty)
@@ -363,19 +398,28 @@ bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
         }
         return true;
     }
+    return false;
+}
 
+bool CheckBetweenVH(struct piece *board, int sx, int sy, int ex, int ey)
+{
+    int horizontalDif = sx - ex;
+    int verticalDif = sy - ey;
     //vertical (sx and ex must be the same)
     if (verticalDif != 0 && horizontalDif == 0)
     {
         printf("vertical, ");
-        if(sy > ey){ //swap for only dealing with one direction
+        if (sy > ey)
+        { //swap for only dealing with one direction
             int temp = sy;
             sy = ey;
             ey = temp;
         }
-        for(int i = 1; i < abs(verticalDif); i++){
+        for (int i = 1; i < abs(verticalDif); i++)
+        {
             printf("%d, ", i);
-            if(board[(sy + i) * 8 + sx].pieceType != empty){
+            if (board[(sy + i) * 8 + sx].pieceType != empty)
+            {
                 return false;
             }
         }
@@ -385,14 +429,17 @@ bool CheckBetween(struct piece *board, int sx, int sy, int ex, int ey)
     if (verticalDif == 0 && horizontalDif != 0)
     {
         printf("horizontal, ");
-        if(sx > ex){ //swap only want 1 direction
+        if (sx > ex)
+        { //swap only want 1 direction
             int temp = sx;
             sx = ex;
             ex = temp;
         }
-        for(int i = 1; i < abs(horizontalDif); i++){
+        for (int i = 1; i < abs(horizontalDif); i++)
+        {
             printf("%d, ", i);
-            if(board[sy * 8 + (sx + i)].pieceType != empty){
+            if (board[sy * 8 + (sx + i)].pieceType != empty)
+            {
                 return false;
             }
         }
@@ -489,13 +536,13 @@ void PrintBoard(struct piece *board)
             switch (pieceColor)
             {
             case 0:
-                printf("\x1B[37m");
+                printf(WHT);
                 break;
             case 1:
-                printf("\x1B[31m");
+                printf(RED);
                 break;
             case 2:
-                printf("\x1B[36m");
+                printf(CYN);
                 break;
             }
             switch (pieceType)
